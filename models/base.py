@@ -214,7 +214,7 @@ class BaseLearner(object):
             return (self._data_memory, self._targets_memory)
 
     def _generate_cur_hash_code_and_target(self, model, loader):
-        # generate hash code for current task
+    
         model.eval()
         N = len(loader.dataset)
         hash_codes = torch.zeros([N, self._hash_code_length]).to(self._device)
@@ -231,7 +231,7 @@ class BaseLearner(object):
 
 
     def _compute_map(self, query_codes, query_targets, database_codes, database_targets):
-        # compute map
+       
         query_codes = query_codes.sign()
         database_codes = database_codes.sign()
         query_label_onehot = target2onehot(query_targets, self._total_classes)
@@ -289,7 +289,6 @@ class BaseLearner(object):
                 else dt
             )
 
-            # Exemplar mean
             idx_dataset = data_manager.get_dataset(
                 [], source="train", mode="test", appendent=(dd, dt)
             )
@@ -319,28 +318,28 @@ class BaseLearner(object):
             vectors = (vectors.T / (np.linalg.norm(vectors.T, axis=0) + EPSILON)).T
             class_mean = np.mean(vectors, axis=0)
 
-            # Select
+    
             selected_exemplars = []
-            exemplar_vectors = []  # [n, feature_dim]
+            exemplar_vectors = [] 
             for k in range(1, m + 1):
                 S = np.sum(
                     exemplar_vectors, axis=0
-                )  # [feature_dim] sum of selected exemplars vectors
-                mu_p = (vectors + S) / k  # [n, feature_dim] sum to all vectors
+                )  
+                mu_p = (vectors + S) / k  
                 i = np.argmin(np.sqrt(np.sum((class_mean - mu_p) ** 2, axis=1)))
                 selected_exemplars.append(
                     np.array(data[i])
-                )  # New object to avoid passing by inference
+                )  
                 exemplar_vectors.append(
                     np.array(vectors[i])
-                )  # New object to avoid passing by inference
+                )  
 
                 vectors = np.delete(
                     vectors, i, axis=0
-                )  # Remove it to avoid duplicative selection
+                ) 
                 data = np.delete(
                     data, i, axis=0
-                )  # Remove it to avoid duplicative selection
+                ) 
 
             selected_exemplars = np.array(selected_exemplars)
             exemplar_targets = np.full(m, class_idx)
@@ -355,7 +354,7 @@ class BaseLearner(object):
                 else exemplar_targets
             )
 
-            # Exemplar mean
+
             idx_dataset = data_manager.get_dataset(
                 [],
                 source="train",
@@ -378,7 +377,7 @@ class BaseLearner(object):
         )
         _class_means = np.zeros((self._total_classes, self.feature_dim))
 
-        # Calculate the means of old classes with newly trained network
+
         for class_idx in range(self._known_classes):
             mask = np.where(self._targets_memory == class_idx)[0]
             class_data, class_targets = (
@@ -399,7 +398,7 @@ class BaseLearner(object):
 
             _class_means[class_idx, :] = mean
 
-        # Construct exemplars for new classes and calculate the means
+
         for class_idx in range(self._known_classes, self._total_classes):
             data, targets, class_dset = data_manager.get_dataset(
                 np.arange(class_idx, class_idx + 1),
@@ -415,30 +414,29 @@ class BaseLearner(object):
             vectors = (vectors.T / (np.linalg.norm(vectors.T, axis=0) + EPSILON)).T
             class_mean = np.mean(vectors, axis=0)
 
-            # Select
+
             selected_exemplars = []
             exemplar_vectors = []
             for k in range(1, m + 1):
                 S = np.sum(
                     exemplar_vectors, axis=0
-                )  # [feature_dim] sum of selected exemplars vectors
-                mu_p = (vectors + S) / k  # [n, feature_dim] sum to all vectors
+                ) 
+                mu_p = (vectors + S) / k 
                 i = np.argmin(np.sqrt(np.sum((class_mean - mu_p) ** 2, axis=1)))
 
                 selected_exemplars.append(
                     np.array(data[i])
-                )  # New object to avoid passing by inference
+                )  
                 exemplar_vectors.append(
                     np.array(vectors[i])
-                )  # New object to avoid passing by inference
+                )  
 
                 vectors = np.delete(
                     vectors, i, axis=0
-                )  # Remove it to avoid duplicative selection
+                ) 
                 data = np.delete(
                     data, i, axis=0
-                )  # Remove it to avoid duplicative selection
-
+                )  
             selected_exemplars = np.array(selected_exemplars)
             exemplar_targets = np.full(m, class_idx)
             self._data_memory = (
@@ -452,7 +450,7 @@ class BaseLearner(object):
                 else exemplar_targets
             )
 
-            # Exemplar mean
+
             exemplar_dset = data_manager.get_dataset(
                 [],
                 source="train",
@@ -478,13 +476,13 @@ class BaseLearner(object):
                 new_class_means = np.zeros((self._total_classes, self.feature_dim))
                 new_class_means[:self._known_classes] = self._class_means
                 self._class_means = new_class_means
-                # new_class_cov = np.zeros((self._total_classes, self.feature_dim, self.feature_dim))
+               
                 new_class_cov = torch.zeros((self._total_classes, self.feature_dim, self.feature_dim))
                 new_class_cov[:self._known_classes] = self._class_covs
                 self._class_covs = new_class_cov
             elif not check_diff:
                 self._class_means = np.zeros((self._total_classes, self.feature_dim))
-                # self._class_covs = np.zeros((self._total_classes, self.feature_dim, self.feature_dim))
+               
                 self._class_covs = torch.zeros((self._total_classes, self.feature_dim, self.feature_dim))
 
             for class_idx in range(self._known_classes, self._total_classes):
@@ -501,14 +499,10 @@ class BaseLearner(object):
                     vectors = np.tile(vectors, (2, 1))
                     print("Shape of vectors after repeating: {}".format(vectors.shape))
 
-                # vectors = np.concatenate([vectors_aug, vectors])
+   
 
                 class_mean = np.mean(vectors, axis=0)
                 class_cov = np.cov(vectors.T)
-                # try:
-                #     class_cov = torch.cov(torch.tensor(vectors, dtype=torch.float64).T) + torch.eye(class_mean.shape[-1]) * 1e-4
-                # except UserWarning as e:
-                #     logging.warning("Caught UserWarning: ", e)
-               
+                
                 self._class_means[class_idx, :] = class_mean
                 self._class_covs[class_idx, ...] = class_cov
