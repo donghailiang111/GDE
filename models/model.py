@@ -90,7 +90,7 @@ class Learner(BaseLearner):
             source="train",
             mode="train",
         )
-        #self.train_dataset = train_dataset
+
         self.train_loader = DataLoader(
             train_dataset, batch_size=self.batch_size, shuffle=True, num_workers=self.num_workers
         )
