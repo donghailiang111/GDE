@@ -23,7 +23,7 @@ def get_backbone(args, pretrained=False):
                 ffn_adapter_scalar="0.1",
                 ffn_num=ffn_num,
                 d_model=768,
-                # VPT related
+          
                 vpt_on=False,
                 vpt_num=0,
                 _device = args["device"][0]
