@@ -2,6 +2,7 @@
 
 - CIFAR-224: The dataset will be downloaded automatically to `./data` on first run.
 - ImageNet-A: Place the data under `./data/imagenet-a/train` and `./data/imagenet-a/test`.
+- ImageNet-R: Place the data under `./data/imagenet-r/train` and `./data/imagenet-r/test`.
 - FGVC-Aircraft: Place the official dataset under `./data/fgvc-aircraft-2013b/data`.
 
 ## 2. Run Commands
@@ -19,6 +20,11 @@ python main.py --config ./exps/aircraft.json
 ### ImageNet-A
 ```bash
 python main.py --config ./exps/imageneta.json
+```
+
+### ImageNet-R
+```bash
+python main.py --config ./exps/imagenetr.json
 ```
 
 ## 3. Output Location
