@@ -32,7 +32,6 @@ class Adapter(nn.Module):
         self.n_embd = config.d_model if d_model is None else d_model
         self.down_size = config.attn_bn if bottleneck is None else bottleneck
 
-        #_before
         self.adapter_layernorm_option = adapter_layernorm_option
 
         self.adapter_layer_norm_before = None
@@ -189,7 +188,7 @@ class VisionTransformer(nn.Module):
 
         self.tuning_config = tuning_config
         self.num_classes = num_classes
-        self.num_features = self.embed_dim = embed_dim  # num_features for consistency with other models
+        self.num_features = self.embed_dim = embed_dim  
         self.num_tokens = 2 if distilled else 1
         norm_layer = norm_layer or partial(nn.LayerNorm, eps=1e-6)
         act_layer = act_layer or nn.GELU
@@ -203,7 +202,7 @@ class VisionTransformer(nn.Module):
         self.pos_embed = nn.Parameter(torch.zeros(1, num_patches + self.num_tokens, embed_dim))
         self.pos_drop = nn.Dropout(p=drop_rate)
 
-        dpr = [x.item() for x in torch.linspace(0, drop_path_rate, depth)]  # stochastic depth decay rule
+        dpr = [x.item() for x in torch.linspace(0, drop_path_rate, depth)]  
         self.blocks = nn.Sequential(*[
             Block(
                 dim=embed_dim, num_heads=num_heads, mlp_ratio=mlp_ratio, qkv_bias=qkv_bias, drop=drop_rate,
@@ -213,7 +212,7 @@ class VisionTransformer(nn.Module):
             for i in range(depth)])
         self.norm = norm_layer(embed_dim)
 
-        # Representation layer
+       
         if representation_size and not distilled:
             self.num_features = representation_size
             self.pre_logits = nn.Sequential(OrderedDict([
@@ -223,7 +222,7 @@ class VisionTransformer(nn.Module):
         else:
             self.pre_logits = nn.Identity()
 
-        # Classifier head(s)
+  
         self.head = nn.Linear(self.num_features, num_classes) if num_classes > 0 else nn.Identity()
         self.head_dist = None
         if distilled:
@@ -339,14 +338,13 @@ def vit_base_patch16_224_multi_adapter(pretrained=False, **kwargs):
     # checkpoint_model = torch.load('./pretrained_models/B_16-i21k-300ep-lr_0.001-aug_medium1-wd_0.1-do_0.0-sd_0.0.npz')
     checkpoint_model=timm.create_model("vit_base_patch16_224", pretrained=False, num_classes=0)
     from safetensors.torch import load_file
-    checkpoint_state_dict = load_file("/mnt/disk2/donghailiang/models_save/vit_base_patch16_224.augreg2_in21k_ft_in1k/model.safetensors")
+    checkpoint_state_dict = load_file("/models_save/vit_base_patch16_224.augreg2_in21k_ft_in1k/model.safetensors")
 
     checkpoint_state_dict = {k: v for k, v in checkpoint_state_dict.items() if not k.startswith('head.')}
     checkpoint_model.load_state_dict(checkpoint_state_dict, strict=False)
 
     state_dict = checkpoint_model.state_dict()
-    # modify the checkpoint state dict to match the model
-    # first, split qkv weight into q, k, v
+
     for key in list(state_dict.keys()):
         if 'qkv.weight' in key:
             qkv_weight = state_dict.pop(key)
