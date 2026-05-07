@@ -111,12 +111,12 @@ def build_transform(is_train, args):
     if resize_im:
         size = int((256 / 224) * input_size)
         t.append(
-            transforms.Resize(size, interpolation=3),  # to maintain same ratio w.r.t. 224 images
+            transforms.Resize(size, interpolation=3),  
         )
         t.append(transforms.CenterCrop(input_size))
     t.append(transforms.ToTensor())
     
-    # return transforms.Compose(t)
+
     return t
 
 class iCIFAR224(iData):
@@ -132,7 +132,7 @@ class iCIFAR224(iData):
             self.train_trsf = build_transform(True, args)
             self.test_trsf = build_transform(False, args)
         self.common_trsf = [
-            # transforms.ToTensor(),
+           
         ]
 
         self.class_order = np.arange(100).tolist()
@@ -161,13 +161,13 @@ class iImageNetR(iData):
             self.train_trsf = build_transform(True, args)
             self.test_trsf = build_transform(False, args)
         self.common_trsf = [
-            # transforms.ToTensor(),
+        
         ]
 
         self.class_order = np.arange(200).tolist()
 
     def download_data(self):
-        # assert 0, "You should specify the folder of your dataset"
+      
         train_dir = "./data/imagenet-r/train/"
         test_dir = "./data/imagenet-r/test/"
 
@@ -188,7 +188,7 @@ class iImageNetA(iData):
     class_order = np.arange(200).tolist()
 
     def download_data(self):
-        # assert 0, "You should specify the folder of your dataset"
+
         train_dir = "./data/imagenet-a/train/"
         test_dir = "./data/imagenet-a/test/"
 
@@ -226,13 +226,13 @@ class FGVCAircraft(iData):
                     line = line.strip()
                     if not line:
                         continue
-                    # format: "<image_id> <variant_name>", variant_name may contain spaces
+                    
                     img_id, variant = line.split(" ", 1)
                     data.append(os.path.join(img_dir, img_id + ".jpg"))
                     targets.append(class_to_idx[variant])
             return np.array(data), np.array(targets)
 
-        # use trainval split as training set, test split as test set
+ 
         self.train_data, self.train_targets = parse_split(
             os.path.join(data_dir, "images_variant_trainval.txt")
         )
