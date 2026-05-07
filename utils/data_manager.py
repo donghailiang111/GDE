@@ -204,7 +204,7 @@ class DummyDataset(Dataset):
 
     def __getitem__(self, idx):
         if self.use_path:
-            image = self.trsf(default_loader(self.images[idx]))  # 使用 default_loader 支持 accimage
+            image = self.trsf(default_loader(self.images[idx]))  
         else:
             image = self.trsf(Image.fromarray(self.images[idx]))
         label = self.labels[idx]
@@ -237,7 +237,7 @@ def pil_loader(path):
     Ref:
     https://pytorch.org/docs/stable/_modules/torchvision/datasets/folder.html#ImageFolder
     """
-    # open path as file to avoid ResourceWarning (https://github.com/python-pillow/Pillow/issues/835)
+  
     with open(path, "rb") as f:
         img = Image.open(f)
         return img.convert("RGB")
@@ -254,7 +254,7 @@ def accimage_loader(path):
         import accimage
         return accimage.Image(path)
     except (ImportError, IOError):
-        # accimage not installed or decoding problem, fall back to PIL.Image
+
         return pil_loader(path)
 
 
