@@ -5,6 +5,11 @@
 - ImageNet-R: Place the data under `./data/imagenet-r/train` and `./data/imagenet-r/test`.
 - FGVC-Aircraft: Place the official dataset under `./data/fgvc-aircraft-2013b/data`.
 
+We have implemented the pre-processing datasets as follows:
+- CIFAR100: will be automatically downloaded by the code.
+- ImageNet-R: https://drive.google.com/file/d/1SG4TbiL8_DooekztyCVK8mPmfhMo8fkR/view?usp=sharing
+- ImageNet-A: https://drive.google.com/file/d/19l52ua_vvTtttgVRziCZJjal0TPE9f2p/view?usp=sharing
+- FGVC-Aircraft: https://www.robots.ox.ac.uk/~vgg/data/fgvc-aircraft/archives/fgvc-aircraft-2013b.tar.gz
 ## 2. Run Commands
 
 ### CIFAR-224
